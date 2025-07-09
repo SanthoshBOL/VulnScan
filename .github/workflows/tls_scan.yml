@@ -1,0 +1,69 @@
+name: TLS Scanner Automation
+
+on:
+  push:
+    paths:
+      - 'data/targets.txt'
+  schedule:
+    - cron: '30 21 * * *'  # Daily 3:00 AM IST (21:30 UTC)
+  workflow_dispatch:
+
+jobs:
+  tls_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🔧 Install System Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y nmap fonts-dejavu-core fonts-liberation
+
+      - name: 📦 Install Python Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: 🧪 Run TLS/SSL Scanner
+        run: |
+          python main.py
+
+      - name: 🔍 Get Latest PDF Report
+        id: latest_pdf
+        run: |
+          latest=$(ls -t reports/*.pdf | head -n1)
+          echo "latest_pdf=$latest" >> $GITHUB_OUTPUT
+
+      - name: 📤 Upload ALL Reports as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: All-TLS-Scan-Reports
+          path: reports/*.pdf
+
+      - name: 📧 Email Only the Latest Report
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "📊 TLS Scan Report - ${{ github.repository }} on ${{ github.run_id }}"
+          body: |
+            Hello,
+
+            Please find attached the **latest** TLS/SSL scan report.
+
+            - 🕒 Time: IST (auto-adjusted)
+            - 📄 Report Name: ${{ steps.latest_pdf.outputs.latest_pdf }}
+
+            Regards,  
+            🔐 VulnScan GitHub Action
+          to: ${{ secrets.EMAIL_TO }}
+          from: VulnScan Bot <${{ secrets.EMAIL_USERNAME }}>
+          attachments: ${{ steps.latest_pdf.outputs.latest_pdf }}
