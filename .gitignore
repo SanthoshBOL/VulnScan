@@ -27,9 +27,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# === GitHub Actions secrets (just in case) ===
-secrets.env
-
 # === Test artifacts ===
 *.tmp
 *.bak
