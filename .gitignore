@@ -1,0 +1,53 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+*.env
+*.venv/
+*.egg-info/
+.env
+.venv/
+.ENV
+
+# === Bytecode / Virtual Envs ===
+*.pyc
+*.pkl
+*.swp
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+
+# === VS Code / IDE ===
+.vscode/
+.idea/
+
+# === GitHub Actions secrets (just in case) ===
+secrets.env
+
+# === Test artifacts ===
+*.tmp
+*.bak
+temp/
+tmp/
+
+# === Coverage / Testing Tools ===
+htmlcov/
+coverage.xml
+.tox/
+.pytest_cache/
+.cache/
+nosetests.xml
+test-results/
+
+# === Notebooks (optional) ===
+*.ipynb_checkpoints/
+
+# === Linting / Formatters ===
+.mypy_cache/
+ruff_cache/
